@@ -42,6 +42,11 @@ if st.sidebar.button("3. ทฤษฎีและการสร้างโม�
 if st.sidebar.button("4. การประเมินผลโมเดล (ตาราง/กราฟ)", use_container_width=True):
     st.session_state.current_page = "4. การประเมินผลโมเดล"
     
+
+st.sidebar.markdown("---")
+if st.sidebar.button("🚀 ใช้งานแอปพลิเคชัน (Prediction)", use_container_width=True, type="primary"):
+    st.session_state.current_page = "ใช้งานแอปพลิเคชัน"
+    
 st.sidebar.markdown("---")
 
 st.sidebar.link_button(
@@ -49,13 +54,6 @@ st.sidebar.link_button(
     "https://github.com/your-username/pes-planus-app",  # ✏️ แก้ไขลิงก์ GitHub โปรเจกต์ตรงนี้
     use_container_width=True
 )
-
-st.sidebar.markdown("---")
-if st.sidebar.button("🚀 ใช้งานแอปพลิเคชัน (Prediction)", use_container_width=True, type="primary"):
-    st.session_state.current_page = "ใช้งานแอปพลิเคชัน"
-
-st.sidebar.markdown("---")
-st.sidebar.info("แอปพลิเคชันนี้เป็นส่วนหนึ่งของโครงงานการคัดกรองภาวะเท้าแบนด้วยปัญญาประดิษฐ์")
 
 # ==========================================
 # 3. ฟังก์ชันโหลดโมเดล
@@ -212,7 +210,8 @@ elif current_page == "5. ข้อมูลผู้พัฒนาโปรเ�
             "id": "664245056",               # ✏️ เปลี่ยนเป็น รหัสนักศึกษา
             "class_group": "66/44",      # ✏️ เปลี่ยนเป็น หมู่เรียน
             "role": "นักศึกษา / ผู้พัฒนา",  # ✏️ เปลี่ยนเป็น บทบาทของคุณในโปรเจกต์
-            "img": "p.png"              # ✏️ นำไฟล์รูปภาพมาวางในโฟลเดอร์เดียวกับ app.py แล้วแก้ชื่อตรงนี้
+            "img": "p.png",              # ✏️ นำไฟล์รูปภาพมาวางในโฟลเดอร์เดียวกับ app.py แล้วแก้ชื่อตรงนี้
+            "github": "https://github.com/littlepakan"
         },
         # ถ้ามีเพื่อนร่วมกลุ่มเพิ่ม ให้ปลดคอมเมนต์ก้อนนี้แล้วแก้ไขได้เลยครับ:
         # {
@@ -243,6 +242,7 @@ elif current_page == "5. ข้อมูลผู้พัฒนาโปรเ�
             st.markdown(f"**🏫 หมู่เรียน:** {dev['class_group']}")
             st.markdown(f"**💻 บทความ/หน้าที่:** {dev['role']}")
             st.success("สาขาวิทยาการคอมพิวเตอร์")
+            st.markdown(f"**💻 GitHub:** {dev['role']}")
             
         st.markdown("---")
 
