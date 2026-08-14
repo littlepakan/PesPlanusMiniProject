@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import os
 import glob
+import plotly.express as px  # นำเข้า Plotly สำหรับวาดกราฟสวยๆ
 
 # ==========================================
 # 1. ตั้งค่าหน้าเว็บ (Page Config)
@@ -15,29 +16,38 @@ import glob
 st.set_page_config(
     page_title="Pes Planus Diagnosis AI",
     page_icon="🦶",
-    layout="wide" # ใช้ layout แบบ wide เพื่อให้แสดงตาราง/กราฟได้สวยขึ้น
+    layout="wide"
 )
 
 # ==========================================
-# 2. เมนูนำทาง (Sidebar Navigation)
+# 2. เมนูนำทาง (Sidebar Buttons)
 # ==========================================
-st.sidebar.title("📌 เมนูนำทาง (Navigation)")
-menu = st.sidebar.radio(
-    "เลือกหัวข้อที่ต้องการ:",
-    (
-        "1. ปัญหาและ Dataset",
-        "2. Data Preprocessing",
-        "3. ทฤษฎีและการสร้างโมเดล ML",
-        "4. การประเมินและเปรียบเทียบโมเดล",
-        "5. 🚀 ใช้งานแอปพลิเคชัน (Prediction)"
-    )
-)
+st.sidebar.title("📌 เมนูนำทาง")
+st.sidebar.markdown("คลิกเลือกหัวข้อที่ต้องการอ่านหรือใช้งาน:")
+
+# ใช้ Session State เพื่อจำว่าผู้ใช้กดปุ่มไหน
+if 'current_page' not in st.session_state:
+    st.session_state.current_page = "1. ปัญหาและ Dataset"
+
+# สร้างปุ่มแบบเต็มความกว้าง (use_container_width=True)
+if st.sidebar.button("1. ปัญหาและ Dataset", use_container_width=True):
+    st.session_state.current_page = "1. ปัญหาและ Dataset"
+if st.sidebar.button("2. Data Preprocessing", use_container_width=True):
+    st.session_state.current_page = "2. Data Preprocessing"
+if st.sidebar.button("3. ทฤษฎีและการสร้างโมเดล ML", use_container_width=True):
+    st.session_state.current_page = "3. ทฤษฎีและการสร้างโมเดล ML"
+if st.sidebar.button("4. การประเมินผลโมเดล (ตาราง/กราฟ)", use_container_width=True):
+    st.session_state.current_page = "4. การประเมินผลโมเดล"
+    
+st.sidebar.markdown("---")
+if st.sidebar.button("🚀 5. ใช้งานแอปพลิเคชัน (Prediction)", use_container_width=True, type="primary"):
+    st.session_state.current_page = "5. ใช้งานแอปพลิเคชัน"
 
 st.sidebar.markdown("---")
 st.sidebar.info("แอปพลิเคชันนี้เป็นส่วนหนึ่งของโครงงานการคัดกรองภาวะเท้าแบนด้วยปัญญาประดิษฐ์")
 
 # ==========================================
-# 3. ฟังก์ชันโหลดโมเดล (Cache ไว้จะได้ไม่โหลดซ้ำ)
+# 3. ฟังก์ชันโหลดโมเดล
 # ==========================================
 @st.cache_resource
 def load_ai_models():
@@ -76,11 +86,12 @@ LABEL_DECODER = {0: "Normal (ปกติ)", 1: "Pes Planus (ภาวะเท�
 # ==========================================
 # 4. ส่วนแสดงผลตามเมนูที่เลือก (Pages)
 # ==========================================
+current_page = st.session_state.current_page
 
 # ------------------------------------------
 # หน้า 1: ปัญหาและ Dataset
 # ------------------------------------------
-if menu == "1. ปัญหาและ Dataset":
+if current_page == "1. ปัญหาและ Dataset":
     st.title("🦶 การกำหนดปัญหาและ Dataset")
     st.markdown("""
     ### 🛑 ปัญหา (Problem Statement)
@@ -88,7 +99,8 @@ if menu == "1. ปัญหาและ Dataset":
     ซึ่งหากปล่อยทิ้งไว้อาจส่งผลให้เกิดอาการปวดข้อเท้า เข่า สะโพก และหลังได้ การวินิจฉัยในปัจจุบันมักอาศัยการตรวจทางคลินิกและการวัดมุมจากภาพถ่ายรังสีเอกซ์ (X-ray) โดยแพทย์ผู้เชี่ยวชาญ ซึ่งใช้เวลาและอาจมีความคลาดเคลื่อนได้
 
     ### 📊 ข้อมูลที่นำมาใช้ (Dataset)
-    * **ทำไมถึงเลือกใช้ข้อมูลชุดนี้?:** เราเลือกใช้ภาพถ่าย X-ray บริเวณเท้า (Lateral Weight-bearing Radiographs) เพราะเป็นมาตรฐานทองคำ (Gold Standard) ในการวินิจฉัยโครงสร้างกระดูก เช่น การดูมุม *Calcaneal Inclusion Angle* * **รายละเอียดข้อมูล:** ประกอบด้วยภาพ X-ray เท้าของผู้ป่วยที่ถูกจัดกลุ่ม (Label) โดยรังสีแพทย์ แบ่งเป็น 2 คลาส คือ:
+    * **ทำไมถึงเลือกใช้ข้อมูลชุดนี้?:** เราเลือกใช้ภาพถ่าย X-ray บริเวณเท้า (Lateral Weight-bearing Radiographs) เพราะเป็นมาตรฐานทองคำ (Gold Standard) ในการวินิจฉัยโครงสร้างกระดูก เช่น การดูมุม *Calcaneal Inclusion Angle*
+    * **รายละเอียดข้อมูล:** ประกอบด้วยภาพ X-ray เท้าของผู้ป่วยที่ถูกจัดกลุ่ม (Label) โดยรังสีแพทย์ แบ่งเป็น 2 คลาส คือ:
         1. `Class 0`: Normal (เท้าปกติ)
         2. `Class 1`: Pes Planus (เท้าแบน)
     """)
@@ -96,7 +108,7 @@ if menu == "1. ปัญหาและ Dataset":
 # ------------------------------------------
 # หน้า 2: Data Preprocessing
 # ------------------------------------------
-elif menu == "2. Data Preprocessing":
+elif current_page == "2. Data Preprocessing":
     st.title("⚙️ Data Preprocessing (การเตรียมข้อมูล)")
     st.markdown("""
     ก่อนนำภาพเข้าสู่โมเดลปัญญาประดิษฐ์ เราได้ทำการปรับแต่งข้อมูล (Preprocessing) เพื่อให้โมเดลเรียนรู้ได้ดีที่สุด ดังนี้:
@@ -111,7 +123,7 @@ elif menu == "2. Data Preprocessing":
 # ------------------------------------------
 # หน้า 3: ทฤษฎีและการสร้างโมเดล ML
 # ------------------------------------------
-elif menu == "3. ทฤษฎีและการสร้างโมเดล ML":
+elif current_page == "3. ทฤษฎีและการสร้างโมเดล ML":
     st.title("🧠 การสร้างโมเดล ML และทฤษฎี")
     st.markdown("""
     โปรเจกต์นี้ใช้สถาปัตยกรรมแบบ **Hybrid Approach (CNN + Traditional ML)** โดยให้ SqueezeNet ทำหน้าที่เป็น "ดวงตา" สกัดจุดเด่นของภาพ 
@@ -133,45 +145,63 @@ elif menu == "3. ทฤษฎีและการสร้างโมเดล
 # ------------------------------------------
 # หน้า 4: การประเมินและเปรียบเทียบโมเดล
 # ------------------------------------------
-elif menu == "4. การประเมินและเปรียบเทียบโมเดล":
+elif current_page == "4. การประเมินผลโมเดล":
     st.title("📊 การประเมินและเปรียบเทียบประสิทธิภาพ")
-    st.markdown("ตารางและกราฟแสดงผลการทดลองจากการทำ **5-Fold Cross Validation** เพื่อเปรียบเทียบโมเดลทั้ง 3 อัลกอริทึม")
+    st.markdown("ผลการทดลองจากการทำ **5-Fold Cross Validation** เพื่อเปรียบเทียบโมเดลทั้ง 3 อัลกอริทึม")
 
-    # พยายามโหลดไฟล์ CSV
     csv_file = "5fold_ml_classification_results.csv"
     if os.path.exists(csv_file):
         df = pd.read_csv(csv_file)
         
-        # กรองเอาเฉพาะข้อมูลค่าเฉลี่ย (Average)
-        df_avg = df[df['Fold'] == 'Average'].copy()
+        # 1. แสดงกราฟแท่งแบบละเอียด (แยก Fold และ Classifier) พร้อมโชว์ตัวเลข
+        st.subheader("📈 กราฟเปรียบเทียบ Accuracy ทุก Folds")
         
+        # กรองข้อมูลเอาเฉพาะที่บอก Fold 1-5 (ไม่เอา Average มาพล็อตปนกันในกราฟนี้)
+        df_folds = df[df['Fold'] != 'Average'].copy()
+        
+        if not df_folds.empty:
+            # สร้างกราฟ Plotly แบบกลุ่ม (Grouped Bar Chart) แสดงค่าเป็น %
+            fig = px.bar(
+                df_folds, 
+                x="Fold", 
+                y="Accuracy", 
+                color="Classifier", 
+                barmode="group",
+                text_auto='.2%', # ให้โชว์ตัวเลขบนแท่งเป็น % (ทศนิยม 2 ตำแหน่ง)
+                title="Accuracy Performance Across 5 Folds"
+            )
+            # ปรับแต่งกราฟให้สวยงามและอ่านง่ายขึ้น
+            fig.update_layout(
+                yaxis_title="Accuracy",
+                xaxis_title="Validation Fold",
+                yaxis_tickformat='.0%',
+                legend_title_text='Machine Learning Model'
+            )
+            fig.update_traces(textposition='outside') # ให้ตัวเลขลอยอยู่เหนือแท่ง
+            st.plotly_chart(fig, use_container_width=True)
+
+        # 2. แสดงตารางค่าเฉลี่ย
+        df_avg = df[df['Fold'] == 'Average'].copy()
         if not df_avg.empty:
-            st.subheader("ตารางเปรียบเทียบค่าเฉลี่ย (Average Scores)")
-            # จัดรูปแบบตารางให้สวยงาม
+            st.subheader("📋 ตารางสรุปค่าเฉลี่ย 5 Folds (Average Scores)")
             st.dataframe(df_avg.style.format({
                 'Accuracy': '{:.4f}', 'Precision': '{:.4f}', 'Recall': '{:.4f}', 
                 'Specificity': '{:.4f}', 'F1-Score': '{:.4f}', 'AUC': '{:.4f}', 'MCC': '{:.4f}'
             }), use_container_width=True)
-
-            st.subheader("📈 กราฟเปรียบเทียบ (Accuracy, F1-Score, AUC)")
-            # เตรียมข้อมูลสำหรับ Plot กราฟ
-            chart_data = df_avg.set_index("Classifier")[["Accuracy", "F1-Score", "AUC"]]
-            st.bar_chart(chart_data)
-        else:
-            st.write("ตารางข้อมูลดิบ (All Folds):")
-            st.dataframe(df)
             
+        with st.expander("ดูตารางข้อมูลดิบทั้งหมด (Raw Data)"):
+             st.dataframe(df)
+
     else:
-        st.warning(f"⚠️ ไม่พบไฟล์ `{csv_file}` ในโฟลเดอร์ กรุณานำไฟล์ CSV ที่ได้จาก Colab มาวางไว้ที่เดียวกับ `app.py` เพื่อแสดงผลตารางและกราฟครับ")
+        st.warning(f"⚠️ ไม่พบไฟล์ `{csv_file}` ในโฟลเดอร์")
 
 # ------------------------------------------
 # หน้า 5: Application (Prediction)
 # ------------------------------------------
-elif menu == "5. 🚀 ใช้งานแอปพลิเคชัน (Prediction)":
+elif current_page == "5. ใช้งานแอปพลิเคชัน":
     st.title("🔍 ระบบปัญญาประดิษฐ์คัดกรองภาวะเท้าแบน")
     st.markdown("ทดสอบอัปโหลดภาพถ่ายรังสีเอกซ์ (X-ray) บริเวณเท้า เพื่อให้โมเดลวิเคราะห์")
 
-    # ส่วนเลือกโมเดล (Dropdown)
     st.subheader("⚙️ 1. เลือกโมเดลที่ต้องการใช้งาน")
     clf = None
     if available_models:
@@ -184,7 +214,6 @@ elif menu == "5. 🚀 ใช้งานแอปพลิเคชัน (Predi
     else:
         st.error("❌ ไม่พบไฟล์ `.pkl` ในระบบ กรุณานำไฟล์โมเดลมาวางไว้ในโฟลเดอร์เดียวกับโค้ด")
 
-    # ส่วนอัปโหลดรูป
     st.subheader("📸 2. อัปโหลดภาพ X-ray")
     uploaded_image = st.file_uploader("รองรับไฟล์ JPG, JPEG, PNG", type=['jpg', 'jpeg', 'png'])
 
@@ -195,9 +224,9 @@ elif menu == "5. 🚀 ใช้งานแอปพลิเคชัน (Predi
             st.image(image, caption="ภาพ X-ray ที่อัปโหลด", use_container_width=True)
         
         with col2:
-            st.write("") # เว้นบรรทัด
             st.write("") 
-            if st.button("🚀 เริ่มวิเคราะห์ (Predict)", use_container_width=True):
+            st.write("") 
+            if st.button("🚀 เริ่มวิเคราะห์ (Predict)", use_container_width=True, type="primary"):
                 if clf is None:
                     st.error("กรุณาเลือกโมเดลก่อน")
                 else:
