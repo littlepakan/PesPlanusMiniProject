@@ -51,7 +51,7 @@ st.sidebar.markdown("---")
 
 st.sidebar.link_button(
     "🐙 GitHub Repository", 
-    "https://github.com/your-username/pes-planus-app",  # ✏️ แก้ไขลิงก์ GitHub โปรเจกต์ตรงนี้
+    "https://github.com/littlepakan/pes-planus-app",  # ✏️ แก้ไขลิงก์ GitHub โปรเจกต์ตรงนี้
     use_container_width=True
 )
 
@@ -241,7 +241,7 @@ elif current_page == "ข้อมูลผู้พัฒนาโปรเจ�
             "class_group": "66/44",      # ✏️ เปลี่ยนเป็น หมู่เรียน
             "role": "นักศึกษา / ผู้พัฒนา",  # ✏️ เปลี่ยนเป็น บทบาทของคุณในโปรเจกต์
             "img": "p.png",              # ✏️ นำไฟล์รูปภาพมาวางในโฟลเดอร์เดียวกับ app.py แล้วแก้ชื่อตรงนี้
-            "github": "https://github.com/littlepakan"
+            "github": "Medicineー (littlepakan)"
         },
         # ถ้ามีเพื่อนร่วมกลุ่มเพิ่ม ให้ปลดคอมเมนต์ก้อนนี้แล้วแก้ไขได้เลยครับ:
         # {
