@@ -41,10 +41,18 @@ if st.sidebar.button("3. ทฤษฎีและการสร้างโม�
     st.session_state.current_page = "3. ทฤษฎีและการสร้างโมเดล ML"
 if st.sidebar.button("4. การประเมินผลโมเดล (ตาราง/กราฟ)", use_container_width=True):
     st.session_state.current_page = "4. การประเมินผลโมเดล"
+    
+st.sidebar.markdown("---")
+
+st.sidebar.link_button(
+    "🐙 GitHub Repository", 
+    "https://github.com/your-username/pes-planus-app",  # ✏️ แก้ไขลิงก์ GitHub โปรเจกต์ตรงนี้
+    use_container_width=True
+)
 
 st.sidebar.markdown("---")
-if st.sidebar.button("🚀 6. ใช้งานแอปพลิเคชัน (Prediction)", use_container_width=True, type="primary"):
-    st.session_state.current_page = "6. ใช้งานแอปพลิเคชัน"
+if st.sidebar.button("🚀 ใช้งานแอปพลิเคชัน (Prediction)", use_container_width=True, type="primary"):
+    st.session_state.current_page = "ใช้งานแอปพลิเคชัน"
 
 st.sidebar.markdown("---")
 st.sidebar.info("แอปพลิเคชันนี้เป็นส่วนหนึ่งของโครงงานการคัดกรองภาวะเท้าแบนด้วยปัญญาประดิษฐ์")
