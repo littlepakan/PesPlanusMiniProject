@@ -30,6 +30,9 @@ if 'current_page' not in st.session_state:
     st.session_state.current_page = "1. ปัญหาและ Dataset"
 
 # สร้างปุ่มสำหรับเปลี่ยนหน้า
+if st.sidebar.button("👨‍💻 ข้อมูลผู้พัฒนาโปรเจกต์", use_container_width=True):
+    st.session_state.current_page = "5. ข้อมูลผู้พัฒนาโปรเจกต์"
+st.sidebar.markdown("---")
 if st.sidebar.button("1. ปัญหาและ Dataset", use_container_width=True):
     st.session_state.current_page = "1. ปัญหาและ Dataset"
 if st.sidebar.button("2. Data Preprocessing", use_container_width=True):
@@ -38,22 +41,12 @@ if st.sidebar.button("3. ทฤษฎีและการสร้างโม�
     st.session_state.current_page = "3. ทฤษฎีและการสร้างโมเดล ML"
 if st.sidebar.button("4. การประเมินผลโมเดล (ตาราง/กราฟ)", use_container_width=True):
     st.session_state.current_page = "4. การประเมินผลโมเดล"
-if st.sidebar.button("👨‍💻 5. ข้อมูลผู้พัฒนาโปรเจกต์", use_container_width=True):
-    st.session_state.current_page = "5. ข้อมูลผู้พัฒนาโปรเจกต์"
 
 st.sidebar.markdown("---")
 if st.sidebar.button("🚀 6. ใช้งานแอปพลิเคชัน (Prediction)", use_container_width=True, type="primary"):
     st.session_state.current_page = "6. ใช้งานแอปพลิเคชัน"
 
 st.sidebar.markdown("---")
-
-# ✨ [จุดที่ 1] ปุ่มลิงก์ไปยัง GitHub บน Sidebar
-st.sidebar.link_button(
-    "🐙 GitHub Repository", 
-    "https://github.com/your-username/pes-planus-app",  # ✏️ แก้ไขลิงก์ GitHub โปรเจกต์ตรงนี้
-    use_container_width=True
-)
-
 st.sidebar.info("แอปพลิเคชันนี้เป็นส่วนหนึ่งของโครงงานการคัดกรองภาวะเท้าแบนด้วยปัญญาประดิษฐ์")
 
 # ==========================================
@@ -198,30 +191,32 @@ elif current_page == "4. การประเมินผลโมเดล":
         st.warning(f"⚠️ ไม่พบไฟล์ `{csv_file}` ในโฟลเดอร์")
 
 # ------------------------------------------
-# หน้า 5: ข้อมูลผู้พัฒนาโปรเจกต์
+# หน้า 5: ข้อมูลผู้พัฒนาโปรเจกต์ (✨ เพิ่มใหม่)
 # ------------------------------------------
 elif current_page == "5. ข้อมูลผู้พัฒนาโปรเจกต์":
     st.title("👨‍💻 ข้อมูลผู้พัฒนาโปรเจกต์")
-    st.markdown("คณะผู้จัดทำโครงงานระบบคัดกรองภาวะเท้าแบนด้วยปัญญาประดิษฐ์")
-    
-    # ✨ [จุดที่ 2.1] ปุ่มลิงก์ไปยัง Repository หลักของโปรเจกต์
-    st.link_button(
-        "⭐ เข้าชม GitHub Repository ของโปรเจกต์นี้", 
-        "https://github.com/your-username/pes-planus-app" # ✏️ แก้ไขลิงก์ตรงนี้
-    )
     st.markdown("---")
 
+    # กำหนดข้อมูลผู้พัฒนา (สามารถปรับแก้ชื่อ, รหัส, หมู่เรียน, พาร์ทรูปภาพ ได้ตรงนี้เลยครับ)
     developers = [
         {
-            "name": "นาย... สุขสันต์",
-            "id": "65xxxxxxx-x",
-            "class_group": "หมู่เรียน 65/xx",
-            "role": "ผู้พัฒนาโปรเจกต์ / AI Developer",
-            "github": "https://github.com/your-username", # ✨ [จุดที่ 2.2] ลิงก์ GitHub ส่วนตัว
-            "img": "profile1.jpg"
+            "name": "นายปกานต์ วงษ์ท่าเรือ",          # ✏️ เปลี่ยนเป็น ชื่อ-นามสกุล ของคุณ
+            "id": "664245056",               # ✏️ เปลี่ยนเป็น รหัสนักศึกษา
+            "class_group": "66/44",      # ✏️ เปลี่ยนเป็น หมู่เรียน
+            "role": "นักศึกษา / ผู้พัฒนา",  # ✏️ เปลี่ยนเป็น บทบาทของคุณในโปรเจกต์
+            "img": "p.png"              # ✏️ นำไฟล์รูปภาพมาวางในโฟลเดอร์เดียวกับ app.py แล้วแก้ชื่อตรงนี้
         },
+        # ถ้ามีเพื่อนร่วมกลุ่มเพิ่ม ให้ปลดคอมเมนต์ก้อนนี้แล้วแก้ไขได้เลยครับ:
+        # {
+        #     "name": "นาย... ชื่อเพื่อน",
+        #     "id": "65xxxxxxx-y",
+        #     "class_group": "หมู่เรียน 65/xx",
+        #     "role": "ผู้พัฒนาโปรเจกต์ / Data Engineer",
+        #     "img": "profile2.jpg"
+        # }
     ]
 
+    # วาดการ์ดผู้พัฒนา
     for dev in developers:
         col1, col2 = st.columns([1, 2])
         
@@ -230,6 +225,7 @@ elif current_page == "5. ข้อมูลผู้พัฒนาโปรเ�
                 img = Image.open(dev["img"])
                 st.image(img, use_container_width=True)
             else:
+                # กรณีที่ยังไม่มีไฟล์รูป ระบบจะใช้รูป Placeholder แทนให้อัตโนมัติ
                 st.image("https://via.placeholder.com/300x350?text=Profile+Image", caption="รออัปโหลดรูปภาพ", use_container_width=True)
                 st.caption(f"💡 นำไฟล์รูปวางในโฟลเดอร์ชื่อ `{dev['img']}` เพื่อแสดงรูปจริง")
                 
@@ -237,10 +233,8 @@ elif current_page == "5. ข้อมูลผู้พัฒนาโปรเ�
             st.subheader(dev["name"])
             st.markdown(f"**🆔 รหัสนักศึกษา:** {dev['id']}")
             st.markdown(f"**🏫 หมู่เรียน:** {dev['class_group']}")
-            st.markdown(f"**💻 บทบาท/หน้าที่:** {dev['role']}")
-            if dev.get("github"):
-                st.markdown(f"**🐙 GitHub ส่วนตัว:** [{dev['github']}]({dev['github']})")
-            st.success("สาขาวิชาเทคโนโลยีสารสนเทศ / วิทยาการคอมพิวเตอร์")
+            st.markdown(f"**💻 บทความ/หน้าที่:** {dev['role']}")
+            st.success("สาขาวิทยาการคอมพิวเตอร์")
             
         st.markdown("---")
 
