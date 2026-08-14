@@ -30,6 +30,9 @@ if 'current_page' not in st.session_state:
     st.session_state.current_page = "1. ปัญหาและ Dataset"
 
 # สร้างปุ่มสำหรับเปลี่ยนหน้า
+if st.sidebar.button("👨‍💻 ข้อมูลผู้พัฒนาโปรเจกต์", use_container_width=True):
+    st.session_state.current_page = "5. ข้อมูลผู้พัฒนาโปรเจกต์"
+st.sidebar.markdown("---")
 if st.sidebar.button("1. ปัญหาและ Dataset", use_container_width=True):
     st.session_state.current_page = "1. ปัญหาและ Dataset"
 if st.sidebar.button("2. Data Preprocessing", use_container_width=True):
@@ -38,8 +41,6 @@ if st.sidebar.button("3. ทฤษฎีและการสร้างโม�
     st.session_state.current_page = "3. ทฤษฎีและการสร้างโมเดล ML"
 if st.sidebar.button("4. การประเมินผลโมเดล (ตาราง/กราฟ)", use_container_width=True):
     st.session_state.current_page = "4. การประเมินผลโมเดล"
-if st.sidebar.button("👨‍💻 5. ข้อมูลผู้พัฒนาโปรเจกต์", use_container_width=True):
-    st.session_state.current_page = "5. ข้อมูลผู้พัฒนาโปรเจกต์"
 
 st.sidebar.markdown("---")
 if st.sidebar.button("🚀 6. ใช้งานแอปพลิเคชัน (Prediction)", use_container_width=True, type="primary"):
@@ -202,7 +203,7 @@ elif current_page == "5. ข้อมูลผู้พัฒนาโปรเ�
         {
             "name": "นายปกานต์ วงษ์ท่าเรือ",          # ✏️ เปลี่ยนเป็น ชื่อ-นามสกุล ของคุณ
             "id": "664245056",               # ✏️ เปลี่ยนเป็น รหัสนักศึกษา
-            "class_group": "หมู่เรียน 66/44",      # ✏️ เปลี่ยนเป็น หมู่เรียน
+            "class_group": "66/44",      # ✏️ เปลี่ยนเป็น หมู่เรียน
             "role": "นักศึกษา / ผู้พัฒนา",  # ✏️ เปลี่ยนเป็น บทบาทของคุณในโปรเจกต์
             "img": "p.png"              # ✏️ นำไฟล์รูปภาพมาวางในโฟลเดอร์เดียวกับ app.py แล้วแก้ชื่อตรงนี้
         },
@@ -234,7 +235,7 @@ elif current_page == "5. ข้อมูลผู้พัฒนาโปรเ�
             st.markdown(f"**🆔 รหัสนักศึกษา:** {dev['id']}")
             st.markdown(f"**🏫 หมู่เรียน:** {dev['class_group']}")
             st.markdown(f"**💻 บทความ/หน้าที่:** {dev['role']}")
-            st.success("สาขาวิชาเทคโนโลยีสารสนเทศ / วิทยาการคอมพิวเตอร์")
+            st.success("สาขาวิทยาการคอมพิวเตอร์")
             
         st.markdown("---")
 
