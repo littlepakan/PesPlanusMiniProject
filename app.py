@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import os
 import glob
-import plotly.express as px  # นำเข้า Plotly สำหรับวาดกราฟสวยๆ
+import plotly.express as px
 
 # ==========================================
 # 1. ตั้งค่าหน้าเว็บ (Page Config)
@@ -29,7 +29,7 @@ st.sidebar.markdown("คลิกเลือกหัวข้อที่ต�
 if 'current_page' not in st.session_state:
     st.session_state.current_page = "1. ปัญหาและ Dataset"
 
-# สร้างปุ่มแบบเต็มความกว้าง (use_container_width=True)
+# สร้างปุ่มสำหรับเปลี่ยนหน้า
 if st.sidebar.button("1. ปัญหาและ Dataset", use_container_width=True):
     st.session_state.current_page = "1. ปัญหาและ Dataset"
 if st.sidebar.button("2. Data Preprocessing", use_container_width=True):
@@ -38,10 +38,12 @@ if st.sidebar.button("3. ทฤษฎีและการสร้างโม�
     st.session_state.current_page = "3. ทฤษฎีและการสร้างโมเดล ML"
 if st.sidebar.button("4. การประเมินผลโมเดล (ตาราง/กราฟ)", use_container_width=True):
     st.session_state.current_page = "4. การประเมินผลโมเดล"
-    
+if st.sidebar.button("👨‍💻 5. ข้อมูลผู้พัฒนาโปรเจกต์", use_container_width=True):
+    st.session_state.current_page = "5. ข้อมูลผู้พัฒนาโปรเจกต์"
+
 st.sidebar.markdown("---")
-if st.sidebar.button("🚀 5. ใช้งานแอปพลิเคชัน (Prediction)", use_container_width=True, type="primary"):
-    st.session_state.current_page = "5. ใช้งานแอปพลิเคชัน"
+if st.sidebar.button("🚀 6. ใช้งานแอปพลิเคชัน (Prediction)", use_container_width=True, type="primary"):
+    st.session_state.current_page = "6. ใช้งานแอปพลิเคชัน"
 
 st.sidebar.markdown("---")
 st.sidebar.info("แอปพลิเคชันนี้เป็นส่วนหนึ่งของโครงงานการคัดกรองภาวะเท้าแบนด้วยปัญญาประดิษฐ์")
@@ -52,7 +54,6 @@ st.sidebar.info("แอปพลิเคชันนี้เป็นส่ว
 @st.cache_resource
 def load_ai_models():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # Backbone
     backbone = models.squeezenet1_0(weights=models.SqueezeNet1_0_Weights.IMAGENET1K_V1)
     backbone.classifier = nn.Sequential(
         nn.Dropout(p=0.5),
@@ -62,7 +63,6 @@ def load_ai_models():
     backbone = backbone.to(device)
     backbone.eval()
     
-    # Classifiers
     pkl_files = glob.glob("*.pkl")
     models_dict = {}
     for file_path in pkl_files:
@@ -153,34 +153,28 @@ elif current_page == "4. การประเมินผลโมเดล":
     if os.path.exists(csv_file):
         df = pd.read_csv(csv_file)
         
-        # 1. แสดงกราฟแท่งแบบละเอียด (แยก Fold และ Classifier) พร้อมโชว์ตัวเลข
         st.subheader("📈 กราฟเปรียบเทียบ Accuracy ทุก Folds")
-        
-        # กรองข้อมูลเอาเฉพาะที่บอก Fold 1-5 (ไม่เอา Average มาพล็อตปนกันในกราฟนี้)
         df_folds = df[df['Fold'] != 'Average'].copy()
         
         if not df_folds.empty:
-            # สร้างกราฟ Plotly แบบกลุ่ม (Grouped Bar Chart) แสดงค่าเป็น %
             fig = px.bar(
                 df_folds, 
                 x="Fold", 
                 y="Accuracy", 
                 color="Classifier", 
                 barmode="group",
-                text_auto='.2%', # ให้โชว์ตัวเลขบนแท่งเป็น % (ทศนิยม 2 ตำแหน่ง)
+                text_auto='.2%',
                 title="Accuracy Performance Across 5 Folds"
             )
-            # ปรับแต่งกราฟให้สวยงามและอ่านง่ายขึ้น
             fig.update_layout(
                 yaxis_title="Accuracy",
                 xaxis_title="Validation Fold",
                 yaxis_tickformat='.0%',
                 legend_title_text='Machine Learning Model'
             )
-            fig.update_traces(textposition='outside') # ให้ตัวเลขลอยอยู่เหนือแท่ง
+            fig.update_traces(textposition='outside')
             st.plotly_chart(fig, use_container_width=True)
 
-        # 2. แสดงตารางค่าเฉลี่ย
         df_avg = df[df['Fold'] == 'Average'].copy()
         if not df_avg.empty:
             st.subheader("📋 ตารางสรุปค่าเฉลี่ย 5 Folds (Average Scores)")
@@ -196,9 +190,58 @@ elif current_page == "4. การประเมินผลโมเดล":
         st.warning(f"⚠️ ไม่พบไฟล์ `{csv_file}` ในโฟลเดอร์")
 
 # ------------------------------------------
-# หน้า 5: Application (Prediction)
+# หน้า 5: ข้อมูลผู้พัฒนาโปรเจกต์ (✨ เพิ่มใหม่)
 # ------------------------------------------
-elif current_page == "5. ใช้งานแอปพลิเคชัน":
+elif current_page == "5. ข้อมูลผู้พัฒนาโปรเจกต์":
+    st.title("👨‍💻 ข้อมูลผู้พัฒนาโปรเจกต์")
+    st.markdown("คณะผู้จัดทำโครงงานระบบคัดกรองภาวะเท้าแบนด้วยปัญญาประดิษฐ์")
+    st.markdown("---")
+
+    # กำหนดข้อมูลผู้พัฒนา (สามารถปรับแก้ชื่อ, รหัส, หมู่เรียน, พาร์ทรูปภาพ ได้ตรงนี้เลยครับ)
+    developers = [
+        {
+            "name": "นายปกานต์ วงษ์ท่าเรือ",          # ✏️ เปลี่ยนเป็น ชื่อ-นามสกุล ของคุณ
+            "id": "664245056",               # ✏️ เปลี่ยนเป็น รหัสนักศึกษา
+            "class_group": "หมู่เรียน 66/44",      # ✏️ เปลี่ยนเป็น หมู่เรียน
+            "role": "นักศึกษา / ผู้พัฒนา",  # ✏️ เปลี่ยนเป็น บทบาทของคุณในโปรเจกต์
+            "img": "p.png"              # ✏️ นำไฟล์รูปภาพมาวางในโฟลเดอร์เดียวกับ app.py แล้วแก้ชื่อตรงนี้
+        },
+        # ถ้ามีเพื่อนร่วมกลุ่มเพิ่ม ให้ปลดคอมเมนต์ก้อนนี้แล้วแก้ไขได้เลยครับ:
+        # {
+        #     "name": "นาย... ชื่อเพื่อน",
+        #     "id": "65xxxxxxx-y",
+        #     "class_group": "หมู่เรียน 65/xx",
+        #     "role": "ผู้พัฒนาโปรเจกต์ / Data Engineer",
+        #     "img": "profile2.jpg"
+        # }
+    ]
+
+    # วาดการ์ดผู้พัฒนา
+    for dev in developers:
+        col1, col2 = st.columns([1, 2])
+        
+        with col1:
+            if os.path.exists(dev["img"]):
+                img = Image.open(dev["img"])
+                st.image(img, use_container_width=True)
+            else:
+                # กรณีที่ยังไม่มีไฟล์รูป ระบบจะใช้รูป Placeholder แทนให้อัตโนมัติ
+                st.image("https://via.placeholder.com/300x350?text=Profile+Image", caption="รออัปโหลดรูปภาพ", use_container_width=True)
+                st.caption(f"💡 นำไฟล์รูปวางในโฟลเดอร์ชื่อ `{dev['img']}` เพื่อแสดงรูปจริง")
+                
+        with col2:
+            st.subheader(dev["name"])
+            st.markdown(f"**🆔 รหัสนักศึกษา:** {dev['id']}")
+            st.markdown(f"**🏫 หมู่เรียน:** {dev['class_group']}")
+            st.markdown(f"**💻 บทความ/หน้าที่:** {dev['role']}")
+            st.success("สาขาวิชาเทคโนโลยีสารสนเทศ / วิทยาการคอมพิวเตอร์")
+            
+        st.markdown("---")
+
+# ------------------------------------------
+# หน้า 6: Application (Prediction)
+# ------------------------------------------
+elif current_page == "6. ใช้งานแอปพลิเคชัน":
     st.title("🔍 ระบบปัญญาประดิษฐ์คัดกรองภาวะเท้าแบน")
     st.markdown("ทดสอบอัปโหลดภาพถ่ายรังสีเอกซ์ (X-ray) บริเวณเท้า เพื่อให้โมเดลวิเคราะห์")
 
@@ -232,24 +275,20 @@ elif current_page == "5. ใช้งานแอปพลิเคชัน":
                 else:
                     with st.spinner("⏳ กำลังสกัด Feature และคำนวณผล..."):
                         try:
-                            # สกัด Feature
                             input_tensor = preprocess(image).unsqueeze(0).to(device)
                             with torch.no_grad():
                                 features = feature_extractor(input_tensor)
                             features_np = features.cpu().numpy()
                             
-                            # ทำนายผล
                             prediction = clf.predict(features_np)[0]
                             result_text = LABEL_DECODER.get(prediction, "Unknown")
                             
-                            # คำนวณความมั่นใจ
                             confidence_text = ""
                             if hasattr(clf, "predict_proba"):
                                 prob = clf.predict_proba(features_np)[0]
                                 confidence = np.max(prob) * 100
                                 confidence_text = f"ความมั่นใจ (Confidence): {confidence:.2f}%"
                             
-                            # แสดงผล
                             st.markdown("### 📊 ผลการวินิจฉัย:")
                             if prediction == 1: 
                                 st.error(f"🚨 **{result_text}**")
