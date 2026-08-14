@@ -243,7 +243,9 @@ elif current_page == "5. ข้อมูลผู้พัฒนาโปรเ�
             st.markdown(f"**💻 บทความ/หน้าที่:** {dev['role']}")
             st.markdown(f"**💻 GitHub:** {dev['github']}")
             st.markdown("---")
-            st.markdown("สาขาวิทยาการคอมพิวเตอร์")
+            st.markdown("**สาขาวิทยาการคอมพิวเตอร์**")
+            st.markdown("**คณะวิทยาศาสตร์และเทคโนโลยี**")
+            st.markdown("**มหาวิทยาลัยราชภัฏนครปฐม**")
             
         st.markdown("---")
 
