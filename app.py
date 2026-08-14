@@ -241,8 +241,9 @@ elif current_page == "5. ข้อมูลผู้พัฒนาโปรเ�
             st.markdown(f"**🆔 รหัสนักศึกษา:** {dev['id']}")
             st.markdown(f"**🏫 หมู่เรียน:** {dev['class_group']}")
             st.markdown(f"**💻 บทความ/หน้าที่:** {dev['role']}")
-            st.success("สาขาวิทยาการคอมพิวเตอร์")
             st.markdown(f"**💻 GitHub:** {dev['github']}")
+            st.markdown("---")
+            st.markdown("สาขาวิทยาการคอมพิวเตอร์")
             
         st.markdown("---")
 
