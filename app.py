@@ -242,7 +242,13 @@ elif current_page == "5. ข้อมูลผู้พัฒนาโปรเ�
             st.markdown(f"**🏫 หมู่เรียน:** {dev['class_group']}")
             st.markdown(f"**💻 บทความ/หน้าที่:** {dev['role']}")
             st.success("สาขาวิทยาการคอมพิวเตอร์")
-            st.markdown(f"**💻 GitHub:** {dev['role']}")
+            st.markdown(f"**<a href="https://github.com/your-username/pes-planus-app" target="_blank" style="text-decoration: none;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 15px; background-color: #24292e; color: white; border-radius: 8px; font-weight: bold; transition: 0.3s; border: 1px solid #444;">
+            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark-Light.png" width="25" />
+            <span>เข้าชม GitHub Repository</span>
+        </div>
+    </a>", unsafe_allow_html=True)
+            st.markdown(f"**💻 GitHub:** {dev['github']}")
             
         st.markdown("---")
 
