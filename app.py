@@ -36,7 +36,7 @@ st.sidebar.markdown("---")
 if st.sidebar.button("1. ปัญหาและ Dataset", use_container_width=True):
     st.session_state.current_page = "1. ปัญหาและ Dataset"
 if st.sidebar.button("2. Data Preprocessing & Validation", use_container_width=True):
-    st.session_state.current_page = "2.1. Data Preprocessing & Validation"
+    st.session_state.current_page = "2. Data Preprocessing & Validation"
 if st.sidebar.button("3. ทฤษฎี SqueezeNet & โมเดล ML", use_container_width=True):
     st.session_state.current_page = "3. ทฤษฎี SqueezeNet & โมเดล ML"
 if st.sidebar.button("4. การประเมินผลโมเดล (ตาราง/กราฟ)", use_container_width=True):
