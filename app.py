@@ -31,12 +31,12 @@ if 'current_page' not in st.session_state:
 
 # สร้างปุ่มสำหรับเปลี่ยนหน้า
 if st.sidebar.button("👨‍💻 ข้อมูลผู้พัฒนาโปรเจกต์", use_container_width=True):
-    st.session_state.current_page = "5. ข้อมูลผู้พัฒนาโปรเจกต์"
+    st.session_state.current_page = "ข้อมูลผู้พัฒนาโปรเจกต์"
 st.sidebar.markdown("---")
 if st.sidebar.button("1. ปัญหาและ Dataset", use_container_width=True):
     st.session_state.current_page = "1. ปัญหาและ Dataset"
-if st.sidebar.button("2. Data Preprocessing", use_container_width=True):
-    st.session_state.current_page = "2. Data Preprocessing"
+if st.sidebar.button("2. Data Preprocessing & Validation", use_container_width=True):
+    st.session_state.current_page = "2. Data Preprocessing & Validation"
 if st.sidebar.button("3. ทฤษฎีและการสร้างโมเดล ML", use_container_width=True):
     st.session_state.current_page = "3. ทฤษฎีและการสร้างโมเดล ML"
 if st.sidebar.button("4. การประเมินผลโมเดล (ตาราง/กราฟ)", use_container_width=True):
@@ -113,18 +113,31 @@ if current_page == "1. ปัญหาและ Dataset":
     """)
 
 # ------------------------------------------
-# หน้า 2: Data Preprocessing
+# หน้า 2: Data Preprocessing & Validation Strategy
 # ------------------------------------------
-elif current_page == "2. Data Preprocessing":
-    st.title("⚙️ Data Preprocessing (การเตรียมข้อมูล)")
+elif current_page == "2. Data Preprocessing & Validation":
+    st.title("⚙️ Data Preprocessing & K-Fold Cross Validation")
     st.markdown("""
-    ก่อนนำภาพเข้าสู่โมเดลปัญญาประดิษฐ์ เราได้ทำการปรับแต่งข้อมูล (Preprocessing) เพื่อให้โมเดลเรียนรู้ได้ดีที่สุด ดังนี้:
+    ### 🛠️ 1. กระบวนการเตรียมข้อมูล (Data Preprocessing)
+    ก่อนนำภาพเข้าสู่โมเดลปัญญาประดิษฐ์ เราได้ทำการปรับแต่งข้อมูลเพื่อให้โมเดลเรียนรู้ได้ดีที่สุด ดังนี้:
 
-    1. **การปรับขนาดภาพ (Resizing):** ปรับขนาดภาพ X-ray ทุกใบให้มีขนาด `224 x 224 pixels` ซึ่งเป็นขนาดมาตรฐานสำหรับโครงข่ายประสาทเทียม
-    2. **การแปลงเป็นเทนเซอร์ (ToTensor):** แปลงค่าพิกเซลของภาพ (0-255) ให้อยู่ในรูปของ Matrix ตัวเลขทศนิยม (0-1) ที่ PyTorch สามารถประมวลผลได้
-    3. **การปรับมาตรฐานสี (Normalization):** ปรับค่า Mean และ Standard Deviation ของภาพให้ตรงกับมาตรฐาน ImageNet `(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])` เพื่อลดสัญญาณรบกวน (Noise) ของแสงและเงา
-    4. **การสกัดคุณลักษณะ (Feature Extraction):** นำภาพที่ปรับแต่งแล้ว ป้อนเข้าสู่โมเดล CNN (SqueezeNet) เพื่อแปลงภาพ 2 มิติ ให้กลายเป็นชุดตัวเลขเวกเตอร์ (Deep Features)
-    5. **การจัดการคลาสที่ไม่สมดุล (SMOTE):** ใช้เทคนิค Synthetic Minority Over-sampling Technique (SMOTE) เพื่อสร้างข้อมูลจำลองของคลาสที่มีจำนวนน้อยกว่า ทำให้โมเดลไม่เอนเอียง (Bias) ไปทางคลาสใดคลาสหนึ่ง
+    1. **การปรับขนาดภาพ (Resizing):** ปรับขนาดภาพ X-ray ทุกใบให้มีขนาด `224 x 224 pixels` เพื่อให้เข้ากับโครงสร้างของ SqueezeNet
+    2. **การแปลงเป็นเทนเซอร์ (ToTensor):** แปลงค่าพิกเซลของภาพ (0-255) ให้อยู่ในรูปของ Matrix ตัวเลขทศนิยม (0-1)
+    3. **การปรับมาตรฐานสี (Normalization):** ปรับค่า Mean และ Standard Deviation ของภาพให้ตรงกับมาตรฐาน ImageNet `(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])`
+    4. **การสกัดคุณลักษณะ (Feature Extraction):** นำภาพป้อนเข้าสู่โมเดล CNN (SqueezeNet) เพื่อแปลงภาพ 2 มิติ ให้กลายเป็นชุดตัวเลขเวกเตอร์ (Deep Features)
+    5. **การจัดการคลาสที่ไม่สมดุล (SMOTE):** ใช้เทคนิค Synthetic Minority Over-sampling Technique (SMOTE) เพื่อปรับสมดุลข้อมูลคลาสเท้าแบนและเท้าปกติก่อนเทรนโมเดล
+
+    ---
+
+    ### 🔄 2. กลยุทธ์การประเมินผลด้วย 5-Fold Cross Validation
+    เพื่อยืนยันว่าโมเดลมีความแม่นยำและเสถียรจริง ไม่ได้เกิดจากความฟลุก เราจึงเลือกใช้กลยุทธ์ **5-Fold Cross Validation** ในการทดลอง:
+
+    * **วิธีการแบ่งข้อมูล:** แบ่งชุดข้อมูลทั้งหมดออกเป็น **5 ส่วนเท่า ๆ กัน (Fold 1 ถึง Fold 5)**
+    * **การทำงานในแต่ละรอบ:**
+        * ในแต่ละรอบ จะใช้ข้อมูล **4 ส่วน (80%)** ในการเทรนโมเดล (Training Set)
+        * ใช้ข้อมูลอีก **1 ส่วน (20%)** ที่เหลือเป็นชุดทดสอบ (Validation Set)
+        * ทำซ้ำกระบวนการนี้จนครบทั้ง 5 รอบ โดยสลับชุด Validation ไปเรื่อย ๆ
+    * **ประโยชน์ที่ได้:** ข้อมูลภาพ X-ray ทุกภาพจะได้รับการทดสอบจริง และค่าประสิทธิภาพทั้งหมดจะถูกนำมา **หาค่าเฉลี่ย (Average Scores)** เพื่อใช้เป็นตัวตัวชี้วัดความแม่นยำที่แท้จริงของโมเดล
     """)
 
 # ------------------------------------------
